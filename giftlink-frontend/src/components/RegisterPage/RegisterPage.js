@@ -24,7 +24,7 @@ function RegisterPage() {
 
                         <div className="mb-4">
 
-                            <label htmlFor="firstName" className="form label"> FirstName</label><br>
+                            <label htmlFor="firstName" className="form label"> FirstName</label><br />
                             <input
                             id="firstName"
                             type="text"
