@@ -24,40 +24,42 @@ function RegisterPage() {
     const { setIsLoggedIn } = useAppContext();
 
     const handleRegister = async () => {
-        const response = await fetch(`${urlConfig.backendUrl}/api/auth/register`, {
-            //Step 1 - Task 6
-            method: 'POST',
-            //Step 1 - Task 7
-            headers: {
-                'content-type': 'application/json',
-            },
-            //Step 1 - Task 8
-            body: JSON.stringify({
-                firstName: firstName,
-                lastName: lastName,
-                email: email,
-                password: password
-            })
-        });
+        try {
+            const response = await fetch(`${urlConfig.backendUrl}/api/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                },
+                body: JSON.stringify({
+                    firstName,
+                    lastName,
+                    email,
+                    password
+                })
+            });
 
-        //Step 2 - Task 1
-        const json = await response.json();
-        console.log('json data', json);
-        console.log('er', json.error);
+            if (!response.ok) {
+                let errorMsg = "Registration failed";
+                try {
+                    const errJson = await response.json();
+                    errorMsg = errJson.error || errorMsg;
+                } catch {}
+                setShowerr(errorMsg);
+                return;
+            }
 
-        //Step 2 - Task 2
-        if (json.authtoken) {
-            sessionStorage.setItem('auth-token', json.authtoken);
-            sessionStorage.setItem('name', firstName);
-            sessionStorage.setItem('email', json.email);
-        //Step 2 - Task 3
-            setIsLoggedIn(true);
-        //Step 2 - Task 4
-            navigate('/app');
-        }
-        if (json.error) {
-        //Step 2 - Task 5
-            setShowerr(json.error);
+            const json = await response.json();
+            if (json.authtoken) {
+                sessionStorage.setItem('auth-token', json.authtoken);
+                sessionStorage.setItem('name', firstName);
+                sessionStorage.setItem('email', json.email);
+                setIsLoggedIn(true);
+                navigate('/app');
+            } else if (json.error) {
+                setShowerr(json.error);
+            }
+        } catch (error) {
+            setShowerr("Could not connect to server.");
         }
     }
 
@@ -98,11 +100,12 @@ function RegisterPage() {
                             <label htmlFor="email" className="form-label">Email</label>
                             <input
                                 id="email"
-                                type="text"
+                                type="email"
                                 className="form-control"
                                 placeholder="Enter your email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
+                                required
                             />
                         {/* Step 2 - Task 6*/}
 

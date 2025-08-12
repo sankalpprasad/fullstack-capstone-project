@@ -8,7 +8,6 @@ const connectToDatabase = require('../models/db');
 const router = express.Router();
 const dotenv = require('dotenv');
 const pino = require('pino');  // Import Pino logger
-const { body, validationResult } = require('express-validator');
 //Step 1 - Task 3: Create a Pino logger instance
 const logger = pino();  // Create a Pino logger instance
 dotenv.config();
@@ -24,20 +23,23 @@ router.post('/register', async (req, res) => {
          const collection = db.collection("users");
 
         //Task 3: Check for existing email
-         const existingEmail = await collection.findOne({ email: req.body.email });
+        const existingEmail = await collection.findOne({ email: req.body.email });
+        if (existingEmail) {
+            return res.status(400).json({ error: 'Email already registered' });
+        }
 
         const salt = await bcryptjs.genSalt(10);
         const hash = await bcryptjs.hash(req.body.password, salt);
         const email = req.body.email;
 
-                const newUser = await collection.insertOne({
+        const newUser = await collection.insertOne({
             email: req.body.email,
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             password: hash,
             createdAt: new Date(),
         });
-                 const payload = {
+        const payload = {
             user: {
                 id: newUser.insertedId,
             },
@@ -76,7 +78,7 @@ router.post('/login', async (req, res) => {
                 id: theUser._id.toString(),
             },
         };
-    jwt.sign(user._id, JWT_SECRET)
+        const authtoken = jwt.sign(payload, JWT_SECRET);
         res.json({authtoken, userName, userEmail });
         // Task 7: Send appropriate message if user not found
         if (theUser) {

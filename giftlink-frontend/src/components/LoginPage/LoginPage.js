@@ -78,7 +78,7 @@ function LoginPage() {
                             <label htmlFor="email" className="form-label">Email</label>
                             <input
                                 id="email"
-                                type="text"
+                                type="email"
                                 className="form-control"
                                 placeholder="Enter your email"
                                 value={email}
