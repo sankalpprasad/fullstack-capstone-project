@@ -133,7 +133,8 @@ router.put('/update', async (req, res) => {
 const authtoken = jwt.sign(payload, JWT_SECRET);
     res.json({authtoken});
 } catch (e) {
-     return res.status(500).send('Internal server error');
+    console.error(e); // Add this line
+    return res.status(500).send('Internal server error');
 
 }
 });
