@@ -9,7 +9,7 @@ import Navbar from './components/Navbar/Navbar';
 import DetailsPage from './components/DetailsPage/DetailsPage';
 import SearchPage from './components/SearchPage/SearchPage';
 function App() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate(); // Removed to fix ESLint no-unused-vars error
   return (
         <>
         <Navbar/>
